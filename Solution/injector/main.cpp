@@ -189,14 +189,12 @@ int main(int argc, char* argv[])
     {
         std::cerr
             << "\n Usage:"
-            << "\n   --dll [path to dll file]"
-            << "\n   --pid [process id]"
-            << "\n      or"
-            << "\n   --process-name [process name]"
+            << "\n   injector[64].exe"
+            << "\n      --dll [path to dll file]"
             << "\n"
-            << "\n For example:"
-            << "\n   injector.exe --dll TestDll.dll --pid 7040"
-            << "\n   injector.exe --dll TestDll.dll --process-name TestProgram.exe"
+            << "\n      --pid [process id]"
+            << "\n         or"
+            << "\n      --process-name [process name]"
             << "\n";
         return EXIT_FAILURE;
     }
