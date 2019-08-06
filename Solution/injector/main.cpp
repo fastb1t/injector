@@ -2,7 +2,6 @@
 #include <windows.h>
 #include <tlhelp32.h>
 
-
 // [FileIsExist]:
 bool FileIsExist(const char* szFileName)
 {
@@ -111,20 +110,20 @@ static bool InjectDll(const char* szDllName, DWORD dwProcessId)
         return false;
     }
 
+    HMODULE hKernel32 = GetModuleHandleA("kernel32.dll");
+    if (!hKernel32)
+    {
+        return false;
+    }
+
+    LPVOID lpLoadLibraryAddress = (LPVOID)GetProcAddress(hKernel32, "LoadLibraryA");
+    if (!lpLoadLibraryAddress)
+    {
+        return false;
+    }
+
     try
     {
-        HMODULE hKernel32 = GetModuleHandleA("kernel32.dll");
-        if (hKernel32 == INVALID_HANDLE_VALUE)
-        {
-            throw std::exception("GetModuleHandleA failed.");
-        }
-
-        LPVOID lpLoadLibraryAddress = (LPVOID)GetProcAddress(hKernel32, "LoadLibraryA");
-        if (lpLoadLibraryAddress == nullptr)
-        {
-            throw std::exception("GetProcAddress failed.");
-        }
-
         LPVOID lpRemoteString = (LPVOID)VirtualAllocEx(
             hProcess,
             NULL,
@@ -209,6 +208,18 @@ int main(int argc, char* argv[])
         {
             dll_name = argv[i + 1];
             i++;
+
+            if (dll_name.empty())
+            {
+                std::cerr << "[ - ] Syntax error.\n";
+                return EXIT_FAILURE;
+            }
+
+            if (!FileIsExist(dll_name.c_str()))
+            {
+                std::cerr << "[ - ] File '" << dll_name << "' not found.\n";
+                return EXIT_FAILURE;
+            }
         }
 
         if (!lstrcmp(argv[i], "--pid") && (i + 1) < argc && mode == WRONG_MODE)
@@ -216,9 +227,20 @@ int main(int argc, char* argv[])
             dwPID = atoi(argv[i + 1]);
             i++;
 
-            if (dwPID != 0)
+            if (dwPID > 0)
             {
                 mode = USING_PID;
+
+                if (!ProcessIsExist(dwPID))
+                {
+                    std::cerr << "[ - ] Process with this id '" << dwPID << "' not found.\n";
+                    return EXIT_FAILURE;
+                }
+            }
+            else
+            {
+                std::cerr << "[ - ] Syntax error.\n";
+                return EXIT_FAILURE;
             }
         }
 
@@ -227,40 +249,37 @@ int main(int argc, char* argv[])
             process_name = argv[i + 1];
             i++;
 
-            if (process_name.empty() == false)
+            if (!process_name.empty())
             {
                 mode = USING_PROCESS_NAME;
+
+                if (!(dwPID = GetPID(process_name.c_str())))
+                {
+                    std::cerr << "[ - ] Process '" << process_name << "' not found.\n";
+                    return EXIT_FAILURE;
+                }
+            }
+            else
+            {
+                std::cerr << "[ - ] Syntax error.\n";
+                return EXIT_FAILURE;
             }
         }
     }
 
     if (mode == WRONG_MODE || dll_name.empty())
     {
-        std::cerr
-            << "[-] syntax error\n"
-            << szBanner << std::endl;
+        std::cerr << "[ - ] Syntax error.\n";
         return EXIT_FAILURE;
-    }
-
-    if (mode == USING_PROCESS_NAME)
-    {
-        if (!(dwPID = GetPID(process_name.c_str())))
-        {
-            std::cerr << "[-] process not found\n";
-            return EXIT_FAILURE;
-        }
     }
 
     if (!InjectDll(dll_name.c_str(), dwPID))
     {
-        std::cerr << "[-] inject failed" << std::endl;
+        std::cerr << "[ - ] Inject failed\n";
         return EXIT_FAILURE;
     }
-    else
-    {
-        std::cerr << "[+] injected" << std::endl;
-    }
 
+    std::cerr << "[ + ] Injected\n";
     return EXIT_SUCCESS;
 }
 // [/main]
