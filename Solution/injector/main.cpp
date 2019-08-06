@@ -163,6 +163,8 @@ static bool InjectDll(const char* szDllName, DWORD dwProcessId)
     catch (std::exception &e)
     {
         std::cerr << e.what() << "\n";
+        CloseHandle(hProcess);
+        return false;
     }
 
     CloseHandle(hProcess);
