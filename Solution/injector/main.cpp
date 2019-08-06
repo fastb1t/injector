@@ -273,6 +273,10 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
+    std::cout << "Process ID:   " << dwPID << "\n";
+    std::cout << "DLL:          " << dll_name << "\n";
+    std::cout << "\n";
+
     if (!InjectDll(dll_name.c_str(), dwPID))
     {
         std::cerr << "[ - ] Inject failed\n";

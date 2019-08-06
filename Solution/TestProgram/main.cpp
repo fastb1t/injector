@@ -31,7 +31,7 @@ int WINAPI _tWinMain(
     _In_        int nShowCmd)
 {
     const TCHAR szTitle[] = _T("TestProgram");
-    const TCHAR szClassName[] = _T("_test_program_class");
+    const TCHAR szClassName[] = _T("_test_program_class_");
 
     DWORD dwStyle = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_MINIMIZEBOX & ~WS_THICKFRAME;
     DWORD dwExStyle = WS_EX_APPWINDOW;
