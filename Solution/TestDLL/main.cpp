@@ -17,6 +17,16 @@ DWORD WINAPI Thread1(LPVOID lpObject)
             const int iWindowWidth = rc.right - rc.left;
             const int iWindowHeight = rc.bottom - rc.top;
 
+            LOGFONT lf;
+            memset(&lf, 0, sizeof(LOGFONT));
+            lstrcpy(lf.lfFaceName, _T("Arial"));
+            lf.lfHeight = 30;
+            HFONT hFont = CreateFontIndirect(&lf);
+
+            int iOldBkMode = SetBkMode(hDC, TRANSPARENT);
+            COLORREF clrOldColor = SetTextColor(hDC, RGB(255, 0, 0));
+            HFONT hOldFont = (HFONT)SelectObject(hDC, hFont);
+            
             TCHAR szText[] = _T("We are hacked!");
 
             SIZE size;
@@ -29,6 +39,10 @@ DWORD WINAPI Thread1(LPVOID lpObject)
                 szText,
                 lstrlen(szText)
             );
+
+            SelectObject(hDC, hOldFont);
+            SetTextColor(hDC, clrOldColor);
+            SetBkMode(hDC, iOldBkMode);
 
             ReleaseDC(hWnd, hDC);
         }

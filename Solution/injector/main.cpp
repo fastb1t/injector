@@ -127,7 +127,7 @@ static bool InjectDll(const char* szDllName, DWORD dwProcessId)
         LPVOID lpRemoteString = (LPVOID)VirtualAllocEx(
             hProcess,
             NULL,
-            lstrlen(szDllName) + 1,
+            static_cast<SIZE_T>(lstrlen(szDllName)) + 1,
             MEM_RESERVE | MEM_COMMIT,
             PAGE_READWRITE
         );
@@ -140,7 +140,7 @@ static bool InjectDll(const char* szDllName, DWORD dwProcessId)
             hProcess,
             lpRemoteString,
             (LPVOID)szDllName,
-            lstrlen(szDllName) + 1,
+            static_cast<SIZE_T>(lstrlen(szDllName)) + 1,
             NULL
         ))
         {
@@ -174,17 +174,6 @@ static bool InjectDll(const char* szDllName, DWORD dwProcessId)
 // [main]:
 int main(int argc, char* argv[])
 {
-    const char szBanner[] =
-        "\n Usage:"
-        "\n   --dll [path to dll file]"
-        "\n   --pid [process id]"
-        "\n      or"
-        "\n   --process-name [process name]"
-        "\n"
-        "\n For example:"
-        "\n   injector.exe --dll TestDll.dll --pid 7040"
-        "\n   injector.exe --dll TestDll.dll --process-name TestProgram.exe";
-
     std::string dll_name;
 
     DWORD dwPID = 0;
@@ -198,9 +187,21 @@ int main(int argc, char* argv[])
 
     if (argc != 5)
     {
-        std::cerr << szBanner << "\n";
+        std::cerr
+            << "\n Usage:"
+            << "\n   --dll [path to dll file]"
+            << "\n   --pid [process id]"
+            << "\n      or"
+            << "\n   --process-name [process name]"
+            << "\n"
+            << "\n For example:"
+            << "\n   injector.exe --dll TestDll.dll --pid 7040"
+            << "\n   injector.exe --dll TestDll.dll --process-name TestProgram.exe"
+            << "\n";
         return EXIT_FAILURE;
     }
+
+    std::cout << "\n";
 
     for (int i = 1; i < argc; i++)
     {
