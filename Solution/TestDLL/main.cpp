@@ -7,7 +7,7 @@ static DWORD WINAPI Thread1(LPVOID lpObject)
     HWND hWnd = FindWindow(_T("_test_program_class_"), _T("TestProgram"));
     if (hWnd)
     {
-        MessageBox(hWnd, "We are hacked!", "Oops...", MB_OK | MB_ICONINFORMATION | MB_TOPMOST);
+        MessageBox(hWnd, _T("We are hacked!"), _T("Oops..."), MB_OK | MB_ICONINFORMATION | MB_TOPMOST);
 
         HDC hDC = GetDC(hWnd);
         if (hDC)
@@ -49,7 +49,7 @@ static DWORD WINAPI Thread1(LPVOID lpObject)
     }
     else
     {
-        MessageBox(NULL, "We are hacked!", "Oops...", MB_OK | MB_ICONINFORMATION | MB_TOPMOST);
+        MessageBox(NULL, _T("We are hacked!"), _T("Oops..."), MB_OK | MB_ICONINFORMATION | MB_TOPMOST);
     }
     ExitThread(1337);
 }

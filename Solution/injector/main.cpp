@@ -3,16 +3,18 @@
 #include <tlhelp32.h>
 
 // [FileIsExist]:
-bool FileIsExist(const char* szFileName)
+static bool FileIsExist(const char* szFileName)
 {
-    if (szFileName == nullptr || szFileName[0] == 0)
+    if (!szFileName || !szFileName[0])
     {
         return false;
     }
 
     WIN32_FIND_DATA wfd;
+    memset(&wfd, 0, sizeof(WIN32_FIND_DATA));
+
     HANDLE hFile = FindFirstFile(szFileName, &wfd);
-    if (hFile != INVALID_HANDLE_VALUE)
+    if (hFile)
     {
         FindClose(hFile);
         return true;
@@ -23,15 +25,15 @@ bool FileIsExist(const char* szFileName)
 
 
 // [ProcessIsExist]:
-bool ProcessIsExist(DWORD dwPID)
+static bool ProcessIsExist(const DWORD dwPID)
 {
-    if (dwPID == 0)
+    if (!dwPID)
     {
         return false;
     }
 
     HANDLE hProcess = OpenProcess(SYNCHRONIZE, FALSE, dwPID);
-    if (hProcess != INVALID_HANDLE_VALUE)
+    if (hProcess)
     {
         if (WaitForSingleObject(hProcess, 0) == WAIT_TIMEOUT)
         {
@@ -47,9 +49,9 @@ bool ProcessIsExist(DWORD dwPID)
 
 
 // [GetPID]:
-DWORD GetPID(const char* szProcessName)
+static DWORD GetPID(const char* szProcessName)
 {
-    if (szProcessName == nullptr || szProcessName[0] == 0)
+    if (!szProcessName || !szProcessName[0])
     {
         return 0;
     }
@@ -61,7 +63,7 @@ DWORD GetPID(const char* szProcessName)
     pe32.dwSize = sizeof(PROCESSENTRY32);
 
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (hProcessSnap == INVALID_HANDLE_VALUE)
+    if (!hProcessSnap)
     {
         return 0;
     }
@@ -91,11 +93,9 @@ DWORD GetPID(const char* szProcessName)
 
 
 // [InjectDll]:
-static bool InjectDll(const char* szDllName, DWORD dwProcessId)
+static bool InjectDll(const char* szDllName, const DWORD dwProcessId)
 {
-    if (szDllName == nullptr ||
-        szDllName[0] == 0 ||
-        dwProcessId == 0)
+    if (!szDllName || !szDllName[0] || !dwProcessId)
     {
         return false;
     }
@@ -131,7 +131,7 @@ static bool InjectDll(const char* szDllName, DWORD dwProcessId)
             MEM_RESERVE | MEM_COMMIT,
             PAGE_READWRITE
         );
-        if (lpRemoteString == nullptr)
+        if (!lpRemoteString)
         {
             throw std::exception("VirtualAllocEx failed.");
         }
@@ -160,7 +160,7 @@ static bool InjectDll(const char* szDllName, DWORD dwProcessId)
             throw std::exception("CreateRemoteThread failed.");
         }
     }
-    catch (std::exception &e)
+    catch (const std::exception &e)
     {
         std::cerr << e.what() << "\n";
         CloseHandle(hProcess);
@@ -280,11 +280,11 @@ int main(int argc, char* argv[])
 
     if (!InjectDll(dll_name.c_str(), dwPID))
     {
-        std::cerr << "[ - ] Inject failed\n";
+        std::cerr << "[ - ] Inject failed.\n";
         return EXIT_FAILURE;
     }
 
-    std::cerr << "[ + ] Injected\n";
+    std::cerr << "[ + ] Injected.\n";
     return EXIT_SUCCESS;
 }
 // [/main]
