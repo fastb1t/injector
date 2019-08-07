@@ -7,12 +7,12 @@ injector - это консольная программа, для инжекти
 ### Использование
 
     Usage:
-        injector[64].exe"
-            --dll [path to dll file]"
+        injector[64].exe
+            --dll [path to dll file]
 
-            --pid [process id]"
-                or"
-            --process-name [process name]"
+            --pid [process id]
+                or
+            --process-name [process name]
 
 ### Примечание
 
