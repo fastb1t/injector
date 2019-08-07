@@ -2,7 +2,7 @@
 #include <windows.h>
 
 // [Thread1]:
-DWORD WINAPI Thread1(LPVOID lpObject)
+static DWORD WINAPI Thread1(LPVOID lpObject)
 {
     HWND hWnd = FindWindow(_T("_test_program_class_"), _T("TestProgram"));
     if (hWnd)

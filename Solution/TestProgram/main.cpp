@@ -23,7 +23,7 @@ static LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 // [/WindowProcedure]
 
 
-// [_tWinMain]: entry point.
+// [_tWinMain]:
 int WINAPI _tWinMain(
     _In_        HINSTANCE hInstance,
     _In_opt_    HINSTANCE hPrevInstance,
