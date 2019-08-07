@@ -1,0 +1,10 @@
+                                                                        CreateRemoteThread      Result
+injector    --dll   TestDLL_x32     --process-name  TestProgram_x32     OK                      OK
+injector    --dll   TestDLL_x64     --process-name  TestProgram_x64     BAD                     BAD
+injector    --dll   TestDLL_x32     --process-name  TestProgram_x64     BAD                     BAD
+injector    --dll   TestDLL_x64     --process-name  TestProgram_x32     OK                      BAD
+
+injector64  --dll   TestDLL_x32     --process-name  TestProgram_x32     OK                      BAD
+injector64  --dll   TestDLL_x64     --process-name  TestProgram_x64     OK                      OK
+injector64  --dll   TestDLL_x32     --process-name  TestProgram_x64     OK                      BAD
+injector64  --dll   TestDLL_x64     --process-name  TestProgram_x32     OK                      BAD
